@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>گردونه شانس مزون</title>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700;800;900&display=swap');
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: Vazirmatn, Tahoma, sans-serif;
+  background: linear-gradient(135deg, #fdfbf7 0%, #e8ddcf 100%);
+  color: #211d19;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Background Image Integration */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: url('Sayda_logo_-_Circle.png') center/contain no-repeat;
+  opacity: 0.08; 
+  z-index: -1;
+}
+
+/* Animated Ambient Orbs */
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  z-index: -2;
+  animation: float 10s infinite alternate ease-in-out;
+}
+.orb-1 { width: 300px; height: 300px; background: rgba(212, 175, 55, 0.15); top: -10%; left: -10%; }
+.orb-2 { width: 400px; height: 400px; background: rgba(255, 255, 255, 0.4); bottom: -10%; right: -10%; animation-delay: -5s; }
+@keyframes float {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(30px, 50px) scale(1.1); }
+}
+
+.wrap { max-width: 520px; width: 100%; padding: 24px 16px 40px; text-align: center; position: relative; z-index: 10; }
+
+/* Upgraded Brand Header with Background Logo */
+.brand { 
+  position: relative;
+  font-size: 34px; 
+  font-weight: 900; 
+  letter-spacing: .5px; 
+  margin: 8px 0 4px; 
+  padding: 16px 0; 
+  color: #2a221b; 
+  z-index: 1; 
+}
+.brand::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url('Sayda_logo_-_Circle.png') center/contain no-repeat;
+  opacity: 0.5; 
+  z-index: -1; 
+}
+
+.sub { color: #756b62; font-size: 15px; margin-bottom: 24px; font-weight: 600; }
+
+/* Glassmorphism Card */
+.card {
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-radius: 32px;
+  padding: 24px;
+  box-shadow: 0 24px 40px rgba(91, 70, 48, 0.08), inset 0 0 0 1px rgba(255,255,255,0.5);
+}
+
+.follow {
+  background: linear-gradient(90deg, #1f1b18, #3a322c);
+  color: #fff;
+  border: 0;
+  border-radius: 16px;
+  padding: 14px 20px;
+  font: 700 16px Vazirmatn;
+  cursor: pointer;
+  margin-bottom: 24px;
+  width: 100%;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+.follow:active { transform: scale(0.98); }
+.follow.done { background: #e8dfd4; color: #322a23; box-shadow: none; pointer-events: none; }
+
+.wheelbox { position: relative; width: min(88vw, 390px); aspect-ratio: 1; margin: 8px auto 28px; }
+canvas { width: 100%; height: 100%; display: block; filter: drop-shadow(0 20px 30px rgba(0,0,0,0.2)); }
+
+/* 3D Metallic Pointer */
+.pointer {
+  position: absolute;
+  top: -18px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 4;
+  width: 44px;
+  height: 55px;
+  background: linear-gradient(135deg, #ffd700, #996515);
+  clip-path: polygon(50% 100%, 0 0, 100% 0);
+  filter: drop-shadow(0 8px 6px rgba(0,0,0,0.5));
+}
+.pointer::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 3px; right: 3px; bottom: 3px;
+  background: linear-gradient(135deg, #fff7d6, #d4af37);
+  clip-path: polygon(50% 100%, 0 0, 100% 0);
+}
+
+/* Pulsing Spin Button */
+.spin {
+  border: 0;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #d4af37, #aa8222);
+  color: white;
+  padding: 16px 32px;
+  font: 800 18px Vazirmatn;
+  cursor: pointer;
+  min-width: 220px;
+  box-shadow: 0 8px 20px rgba(212, 175, 55, 0.4);
+  animation: pulse 2s infinite;
+  transition: all 0.3s ease;
+}
+.spin:disabled { 
+  background: #a9a29a; box-shadow: none; animation: none; cursor: not-allowed; opacity: 0.7; 
+}
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.6); }
+  70% { box-shadow: 0 0 0 15px rgba(212, 175, 55, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
+}
+
+.note { font-size: 12px; color: #82776d; margin-top: 16px; line-height: 1.8; }
+
+/* Winning Reveal Ticket */
+.result {
+  display: none;
+  margin-top: 24px;
+  padding: 24px 16px;
+  border-radius: 20px;
+  background: #fff;
+  border: 1px solid #e5d9cc;
+  box-shadow: 0 10px 25px rgba(91, 70, 48, 0.1);
+  position: relative;
+}
+.result.show { display: block; animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+@keyframes popIn { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+
+.prize {
+  font-size: 32px;
+  font-weight: 900;
+  margin: 8px 0 16px;
+  background: linear-gradient(90deg, #aa8222, #ffd700, #aa8222);
+  background-size: 200% auto;
+  color: transparent;
+  -webkit-background-clip: text;
+  animation: shimmer 2.5s linear infinite;
+}
+@keyframes shimmer { to { background-position: 200% center; } }
+
+.code {
+  font-size: 16px;
+  font-weight: 700;
+  color: #322a23;
+  padding: 12px 24px;
+  display: inline-block;
+  background: radial-gradient(circle at 0 50%, transparent 6px, #f4ece1 7px), 
+              radial-gradient(circle at 100% 50%, transparent 6px, #f4ece1 7px);
+  background-size: 51% 100%;
+  background-position: left, right;
+  background-repeat: no-repeat;
+  border-top: 2px dashed #d5c0a9;
+  border-bottom: 2px dashed #d5c0a9;
+}
+.small { font-size: 12px; color: #766b62; margin-top: 16px; }
+</style>
+</head>
+<body>
+
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+
+<div class="wrap">
+  <div class="brand">مزون سایدا</div>
+  <div class="sub">گردونه شانس خرید 🎁</div>
+  <div class="card">
+    <button class="follow" id="follow">۱) اول پیج اینستاگرام را فالو کن</button>
+    <div class="wheelbox">
+      <div class="pointer"></div>
+      <canvas id="wheel" width="800" height="800"></canvas>
+    </div>
+    <button class="spin" id="spin" disabled>۲) چرخاندن گردونه</button>
+    <div class="note">هر مشتری روزی فقط یک بار فرصت چرخاندن دارد.</div>
+    <div class="result" id="result">
+      <div style="font-weight: 700; color: #5b4630;">🎉 جایزه شما</div>
+      <div class="prize" id="prize"></div>
+      <div class="code" id="code"></div>
+      <div class="small">کد را هنگام خرید به صندوق‌دار نشان دهید.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+const INSTAGRAM_URL = "https://instagram.com/saye__da";
+const prizes = [
+  {name:"۳٪ تخفیف", weight:18},
+  {name:"۴٪ تخفیف", weight:16},
+  {name:"۵٪ تخفیف", weight:15},
+  {name:"۶٪ تخفیف", weight:13},
+  {name:"۷٪ تخفیف", weight:11},
+  {name:"۸٪ تخفیف", weight:9},
+  {name:"۹٪ تخفیف", weight:7},
+  {name:"۱۰٪ تخفیف", weight:6},
+  {name:"۱۱٪ تخفیف", weight:5},
+  {name:"۱۲٪ تخفیف", weight:4} 
+];
+const canvas = document.getElementById("wheel"), ctx = canvas.getContext("2d");
+const n = prizes.length;
+const colors = ["#e8d8c8","#1f1b18","#d5c0a9","#9f846b","#efe7dd","#6f5b49","#c9aa87","#312923"];
+let rotation = 0, spinning = false;
+
+function shadeColor(col, amt) {
+    let usePound = false;
+    if (col[0] == "#") { col = col.slice(1); usePound = true; }
+    let num = parseInt(col,16);
+    let r = (num >> 16) + amt; if (r > 255) r = 255; else if  (r < 0) r = 0;
+    let b = ((num >> 8) & 0x00FF) + amt; if (b > 255) b = 255; else if  (b < 0) b = 0;
+    let g = (num & 0x0000FF) + amt; if (g > 255) g = 255; else if (g < 0) g = 0;
+    return (usePound?"#":"") + (g | (b << 8) | (r << 16)).toString(16).padStart(6, '0');
+}
+
+function draw(activeIndex = -1) {
+ const cx = 400, cy = 400, r = 350, step = Math.PI * 2 / n;
+ ctx.clearRect(0, 0, 800, 800);
+ 
+ for(let i = 0; i < n; i++) {
+   const a = rotation + i * step - Math.PI / 2;
+   
+   ctx.globalAlpha = (activeIndex !== -1 && activeIndex !== i) ? 0.3 : 1.0;
+   
+   ctx.beginPath(); ctx.moveTo(cx, cy); ctx.arc(cx, cy, r, a, a + step); ctx.closePath();
+   
+   const baseColor = colors[i % colors.length];
+   const edgeColor = shadeColor(baseColor, -25);
+   const sliceGrad = ctx.createRadialGradient(cx, cy, r/4, cx, cy, r);
+   sliceGrad.addColorStop(0, baseColor);
+   sliceGrad.addColorStop(1, edgeColor);
+   
+   ctx.fillStyle = sliceGrad; ctx.fill(); 
+   ctx.strokeStyle = "#fff"; ctx.lineWidth = 3; ctx.stroke();
+   
+   ctx.save(); ctx.translate(cx, cy); ctx.rotate(a + step / 2);
+   
+   ctx.fillStyle = (i % 2 === 1) ? "#fff" : "#241d17"; 
+   ctx.shadowColor = (i % 2 === 1) ? "rgba(0,0,0,0.5)" : "rgba(255,255,255,0.4)";
+   ctx.shadowBlur = 4; ctx.shadowOffsetY = 2;
+   ctx.font = "800 27px Vazirmatn";
+   ctx.textAlign = "right"; ctx.textBaseline = "middle"; 
+   ctx.fillText(prizes[i].name, 310, 0); 
+   ctx.restore();
+ }
+
+ ctx.globalAlpha = 1.0; 
+
+ ctx.beginPath(); ctx.arc(cx, cy, r + 10, 0, Math.PI * 2);
+ const rimGrad = ctx.createLinearGradient(0, 0, 800, 800);
+ rimGrad.addColorStop(0, "#ffd700"); rimGrad.addColorStop(0.5, "#b8860b"); rimGrad.addColorStop(1, "#ffd700");
+ ctx.strokeStyle = rimGrad; ctx.lineWidth = 20; ctx.stroke();
+
+ for(let i = 0; i < n * 3; i++) {
+    const a = rotation + i * (Math.PI * 2 / (n * 3)) - Math.PI / 2;
+    const lightX = cx + Math.cos(a) * (r + 10);
+    const lightY = cy + Math.sin(a) * (r + 10);
+    ctx.beginPath(); ctx.arc(lightX, lightY, 5, 0, Math.PI * 2);
+    ctx.fillStyle = (i % 2 === 0) ? "#fff" : "#ffeaa7"; ctx.fill();
+    ctx.shadowBlur = 8; ctx.shadowColor = "#ffd700";
+ }
+ ctx.shadowBlur = 0; 
+
+ ctx.beginPath(); ctx.arc(cx, cy, 75, 0, Math.PI * 2); 
+ const hubGrad = ctx.createRadialGradient(cx, cy, 10, cx, cy, 75);
+ hubGrad.addColorStop(0, "#2c241c");
+ hubGrad.addColorStop(1, "#110e0a");
+ ctx.fillStyle = hubGrad; ctx.fill();
+ 
+ ctx.beginPath(); ctx.arc(cx, cy, 75, 0, Math.PI * 2);
+ ctx.strokeStyle = rimGrad; ctx.lineWidth = 12; ctx.stroke();
+ 
+ ctx.fillStyle = "#fff"; ctx.font = "900 28px Vazirmatn"; 
+ ctx.shadowColor = "rgba(0,0,0,0.8)"; ctx.shadowBlur = 6; ctx.shadowOffsetY = 2;
+ ctx.textAlign = "center"; ctx.textBaseline = "middle"; 
+ ctx.fillText("شانس", cx, cy);
+ ctx.shadowBlur = 0;
+}
+draw();
+
+const today = () => new Date().toISOString().slice(0,10);
+const key = "meson_spin_" + today();
+const follow = document.getElementById("follow"), spin = document.getElementById("spin");
+let followed = localStorage.getItem("meson_followed") === "1";
+
+function refresh(){
+ if(followed){
+   follow.textContent = "✓ پیج فالو شد"; 
+   follow.classList.add("done"); 
+   spin.disabled = !!localStorage.getItem(key);
+ }
+}
+
+follow.onclick = () => {
+  window.open(INSTAGRAM_URL, "_blank");
+  followed = true; 
+  localStorage.setItem("meson_followed", "1"); 
+  refresh();
+};
+
+spin.onclick = () => {
+ if(spinning || localStorage.getItem(key)) return;
+ spinning = true; spin.disabled = true;
+ 
+ let total = prizes.reduce((s,p) => s + p.weight, 0), x = Math.random() * total, idx = 0;
+ for(let i = 0; i < n; i++) {
+   if(x < prizes[i].weight) { idx = i; break; }
+   x -= prizes[i].weight;
+ }
+ 
+ const step = 360 / n, target = 360 * 8 + (360 - (idx + .5) * step);
+ const start = rotation * 180 / Math.PI, end = start + target;
+ const t0 = performance.now(), dur = 5000;
+ 
+ function anim(t) {
+   let p = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - p, 4);
+   rotation = (start + (end - start) * e) * Math.PI / 180; 
+   draw(); 
+   
+   if(p < 1) requestAnimationFrame(anim); 
+   else {
+     spinning = false; 
+     localStorage.setItem(key, "1");
+     
+     draw(idx); 
+     
+     const code = "SAYE-" + Math.random().toString(36).slice(2,7).toUpperCase();
+     
+     document.getElementById("prize").textContent = prizes[idx].name;
+     document.getElementById("code").textContent = "کد جایزه: " + code;
+     document.getElementById("result").classList.add("show");
+     
+     confetti({
+       particleCount: 200,
+       spread: 90,
+       origin: { y: 0.6 },
+       colors: ['#ffd700', '#ffffff', '#aa8222'],
+       zIndex: 1000
+     });
+   }
+ }
+ requestAnimationFrame(anim);
+};
+refresh();
+</script>
+</body>
+</html>
